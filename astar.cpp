@@ -102,34 +102,34 @@ void InsertStartIntoOpenList(vector<Node*>& openList, Node* start, Node* end)
 void InsertIntoOpenList(Node nodeMap[MAP_WIDTH][MAP_HEIGHT], vector<Node*>& openList, 
                         Axis node, Node* current, Node* end)
 {
-    /* node为障碍物 */
+    /* node is barrier */
     if (NODE_BARRIER == nodeMap[node.x][node.y].type)
     {
         return;
     }
 
-    /* node已经在close表中 */
+    /* node has already been add into close list */
     if (nodeMap[node.x][node.y].isInCloseList)
     {
         return;
     }
 
-    /* node已经在open表中 */
+    /* node has already been add into open list */
     if (nodeMap[node.x][node.y].isInOpenList)
     {
-        /* 从当前节点到node的路径更优, 则更新node的g,f值 */
+        /* if thep path form current node to  node is much shorter, update g of node */
         if (nodeMap[node.x][node.y].g > current->g + 1)
         {
             nodeMap[node.x][node.y].g      = current->g + 1;
             nodeMap[node.x][node.y].father = current;
 
-            /* 调整堆 */
+            /* adjust the the heap of open list */
             make_heap(openList.begin(), openList.end(), Greater);
         }
         return;
     }
 
-    /* node不在open表, 将node加入open表 */
+    /* if node is not in open list, add node into it */
     nodeMap[node.x][node.y].g = current->g + 1;
     nodeMap[node.x][node.y].h = abs(node.x - end->x) + abs(node.y - end->y);
     nodeMap[node.x][node.y].father = current;
@@ -193,17 +193,17 @@ int FindPath(int map[][MAP_HEIGHT], Axis& start, Axis& end, list<Axis>& path)
         return -1;
     }
 
-    /* 初始化地图 */
+    /* initalize map */
     MapInit(map, nodeMap);
     endNode = &nodeMap[end.x][end.y];
 
-    /* 将起始节点加入open list */
+    /* add start node into open list */
     InsertStartIntoOpenList(openList, &nodeMap[start.x][start.y], endNode);
 
-    /* 开始查找起点到终点的路径 */
+    /* begin to find path */
     while (true)
     {
-        /* 取f值最小节点作为将当前节点 */
+        /* choose node whose f is smallest as the current node */
         current = GetCurrentNode(openList, closeList);
         if (current->x == endNode->x && current->y == endNode->y)
         {
@@ -211,10 +211,10 @@ int FindPath(int map[][MAP_HEIGHT], Axis& start, Axis& end, list<Axis>& path)
             break;
         }
 
-        /* 发现当前节点的邻节点并加入open list */
+        /* add the current node's neighbors into open list */
         SearchNeighbors(nodeMap, openList, current, endNode);
 
-        /* open表为空, 寻路失败 */
+        /* open list is empty that means we can't find path */
         if (openList.empty())
         {
             cout << "Cannot find path!:(\n";
@@ -222,7 +222,7 @@ int FindPath(int map[][MAP_HEIGHT], Axis& start, Axis& end, list<Axis>& path)
         }
     }
 
-    /* 从end节点回溯路径 */
+    /* backtrack from end to start */
     current = endNode;
     while (current)
     {
