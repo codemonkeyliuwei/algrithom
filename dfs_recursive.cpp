@@ -89,6 +89,7 @@ int main(void)
     graph[1].neighbors.push_back(Node(3, 3));
     graph[3].neighbors.push_back(Node(2, 5));
     graph[3].neighbors.push_back(Node(5, 1));
+    graph[2].neighbors.push_back(Node(5, 3));
 
     int start = 0;
     int end   = 5;
