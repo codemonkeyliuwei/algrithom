@@ -16,9 +16,13 @@ struct Node
 {
     int v;
     int w;
-    bool isVisited;
-    Node(int _v, int _w) : v(_v), w(_w), isVisited(false){}
+    Node(int _v, int _w) : v(_v), w(_w){}
 };
+
+void PrintInteger(int value)
+{
+    cout << value;
+}
 
 struct Graph
 {
@@ -28,14 +32,35 @@ struct Graph
 Graph graph[MAX_VERTEX_COUNT];
 bool  visited[MAX_VERTEX_COUNT];
 
+//最短路径
+vector<int> g_Path;
+
+void UpdatePath(vector<int> & path)
+{
+    if (g_Path.empty() || path.size() < g_Path.size())
+    {
+        g_Path.clear();
+        g_Path.insert(g_Path.begin(), path.begin(),path.end());
+        return;
+    }
+}
+
 int dfs(int start, int end, vector<int> &path)
 {
     int ret = RET_OK;
 
     if (start == end)
     {
-        cout << "Find it!\n";
+        cout << "Find path : ";
+        for_each(path.begin(), path.end(), PrintInteger);
+        cout << endl;
+        UpdatePath(path);
         return RET_OK;
+    }
+
+    if (graph[start].neighbors.empty())
+    {
+        return RET_NO_ROUTE;
     }
 
     list<Node>::iterator neighbor = graph[start].neighbors.begin();
@@ -45,16 +70,10 @@ int dfs(int start, int end, vector<int> &path)
         {
             visited[neighbor->v] = true;
             path.push_back(neighbor->v);
-            ret = dfs(neighbor->v, end, path);
-            if (ret != RET_OK)
-            {
-                /* remove v from path if cannot arrive end pass v */
-                path.pop_back();
-            }
-            else
-            {
-                return RET_OK;
-            }
+            dfs(neighbor->v, end, path);
+            //遍历所有节点
+            path.pop_back();
+            visited[neighbor->v] = false;
         }
         neighbor++;
     }
@@ -62,23 +81,29 @@ int dfs(int start, int end, vector<int> &path)
     return RET_NO_ROUTE;
 }
 
-void PrintInt(int value)
-{
-    cout << value ;
-}
-
 int main(void)
 {
-    vector<int> path;
-    graph[0].neighbors.push_back(Node(2, 1));
     graph[0].neighbors.push_back(Node(1, 1));
+    graph[0].neighbors.push_back(Node(2, 1));
     graph[1].neighbors.push_back(Node(2, 2));
     graph[1].neighbors.push_back(Node(3, 3));
     graph[3].neighbors.push_back(Node(2, 5));
+    graph[3].neighbors.push_back(Node(5, 1));
 
-    path.push_back(0);
-    dfs(0, 3, path);
+    int start = 0;
+    int end   = 5;
 
-    for_each(path.begin(), path.end(), PrintInt);
+    vector<int> path;
+    path.push_back(start);
+    if (dfs(start, end, path) == RET_OK)
+    {
+        cout << "Shortest path " << start << " -> " << end << " : ";
+        for_each(g_Path.begin(), g_Path.end(), PrintInteger);
+    }
+    else
+    {
+        cout << "No route " << start << " -> " << end << endl;
+    }
+
     return 0;
 }
