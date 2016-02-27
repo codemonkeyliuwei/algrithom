@@ -90,16 +90,20 @@ int main(void)
     graph[3].neighbors.push_back(Node(2, 5));
     graph[3].neighbors.push_back(Node(5, 1));
     graph[2].neighbors.push_back(Node(5, 3));
+    graph[2].neighbors.push_back(Node(0, 3));
 
     int start = 0;
     int end   = 5;
 
     vector<int> path;
+    visited[start] = true;
     path.push_back(start);
-    if (dfs(start, end, path) == RET_OK)
+    dfs(start, end, path);
+    if (g_Path.size() > 1)
     {
         cout << "Shortest path " << start << " -> " << end << " : ";
         for_each(g_Path.begin(), g_Path.end(), PrintInteger);
+        cout << endl;
     }
     else
     {
