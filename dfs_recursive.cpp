@@ -47,8 +47,6 @@ void UpdatePath(vector<int> & path)
 
 int dfs(int start, int end, vector<int> &path)
 {
-    int ret = RET_OK;
-
     if (start == end)
     {
         cout << "Find path : ";
@@ -75,7 +73,7 @@ int dfs(int start, int end, vector<int> &path)
             path.pop_back();
             visited[neighbor->v] = false;
         }
-        neighbor++;
+        ++neighbor;
     }
 
     return RET_NO_ROUTE;
